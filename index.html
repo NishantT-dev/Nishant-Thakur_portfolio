@@ -106,7 +106,6 @@
         --radius-sm: 12px;
         --radius: 20px;
         --radius-lg: 28px;
-        --cursor-size: 10px;
         --transition-fast: 0.2s ease;
         --transition-mid: 0.35s ease;
         --transition-slow: 0.65s ease;
@@ -194,58 +193,382 @@
         z-index: 0;
         opacity: 0.35;
         transition: opacity 0.4s;
+        animation: gridPulse 8s ease-in-out infinite;
+      }
+      @keyframes gridPulse {
+        0%,100% { opacity: 0.35; }
+        50% { opacity: 0.22; }
       }
       [data-theme="dark"] body::before {
         opacity: 0.18;
       }
 
-      /* ── Custom Cursor (desktop only) ── */
-      @media (hover: hover) {
-        * {
-          cursor: none;
-        }
-        #cursor-dot,
-        #cursor-ring {
-          position: fixed;
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 9999;
-          transform: translate(-50%, -50%);
-          transition: opacity 0.3s;
-        }
-        #cursor-dot {
-          width: var(--cursor-size);
-          height: var(--cursor-size);
-          background: var(--emerald);
-          will-change: transform;
-          transition:
-            width 0.2s,
-            height 0.2s,
-            background 0.2s;
-        }
-        #cursor-ring {
-          width: 36px;
-          height: 36px;
-          border: 1.5px solid rgba(16, 185, 129, 0.5);
-          background: transparent;
-          will-change: transform;
-          transition:
-            width 0.25s,
-            height 0.25s,
-            border-color 0.25s,
-            transform 0.08s linear;
-        }
-        body.cursor-hover #cursor-dot {
-          width: 6px;
-          height: 6px;
-          background: #fff;
-        }
-        body.cursor-hover #cursor-ring {
-          width: 48px;
-          height: 48px;
-          border-color: var(--emerald);
-          background: rgba(16, 185, 129, 0.08);
-        }
+      /* ── Animated Background Blobs ── */
+      .bg-orb {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        filter: blur(80px);
+        opacity: 0;
+      }
+      .bg-orb-1 {
+        width: 600px; height: 600px;
+        top: -120px; left: -160px;
+        background: radial-gradient(circle, rgba(5,150,105,0.13) 0%, transparent 70%);
+        animation: orbPulse 14s ease-in-out infinite, orbFadeIn 1.2s 0.1s ease forwards;
+      }
+      .bg-orb-2 {
+        width: 500px; height: 500px;
+        top: 10%; right: -100px;
+        background: radial-gradient(circle, rgba(14,165,233,0.11) 0%, transparent 70%);
+        animation: orbPulse2 18s ease-in-out infinite, orbFadeIn 1.2s 0.3s ease forwards;
+      }
+      .bg-orb-3 {
+        width: 420px; height: 420px;
+        bottom: 15%; left: 5%;
+        background: radial-gradient(circle, rgba(124,58,237,0.09) 0%, transparent 70%);
+        animation: orbPulse3 22s ease-in-out infinite, orbFadeIn 1.2s 0.5s ease forwards;
+      }
+      .bg-orb-4 {
+        width: 360px; height: 360px;
+        bottom: -60px; right: 10%;
+        background: radial-gradient(circle, rgba(244,63,94,0.07) 0%, transparent 70%);
+        animation: orbPulse 16s 4s ease-in-out infinite, orbFadeIn 1.2s 0.7s ease forwards;
+      }
+      @keyframes orbFadeIn { to { opacity: 1; } }
+      @keyframes orbPulse {
+        0%,100% { transform: scale(1) translate(0,0); }
+        33% { transform: scale(1.08) translate(18px,-12px); }
+        66% { transform: scale(0.95) translate(-14px,20px); }
+      }
+      @keyframes orbPulse2 {
+        0%,100% { transform: scale(1) translate(0,0); }
+        40% { transform: scale(1.1) translate(-20px,16px); }
+        70% { transform: scale(0.93) translate(12px,-18px); }
+      }
+      @keyframes orbPulse3 {
+        0%,100% { transform: scale(1) translate(0,0); }
+        50% { transform: scale(1.12) translate(14px,22px); }
+      }
+
+      /* ── Glass shimmer sweep on cards ── */
+      .glass::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background: linear-gradient(
+          130deg,
+          transparent 0%,
+          rgba(255,255,255,0) 35%,
+          rgba(255,255,255,0.18) 50%,
+          rgba(255,255,255,0) 65%,
+          transparent 100%
+        );
+        transform: translateX(-150%) skewX(-10deg);
+        transition: transform 0.75s cubic-bezier(0.22,1,0.36,1);
+        z-index: 1;
+      }
+      [data-theme="dark"] .glass::after {
+        background: linear-gradient(
+          130deg,
+          transparent 0%,
+          rgba(255,255,255,0) 35%,
+          rgba(255,255,255,0.07) 50%,
+          rgba(255,255,255,0) 65%,
+          transparent 100%
+        );
+      }
+      .glass:hover::after {
+        transform: translateX(150%) skewX(-10deg);
+      }
+
+      /* ── Enhanced glass glow on hover ── */
+      .glass:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          var(--card-shadow-hover),
+          inset 0 1px 0 rgba(255,255,255,0.25) !important;
+      }
+      /* Skill/contact/tech cards get the green tint — project cards don't */
+      .skill-card.glass:hover,
+      .contact-item.glass:hover,
+      .tech-chip.glass:hover {
+        border-color: rgba(16,185,129,0.3) !important;
+      }
+      [data-theme="dark"] .glass:hover {
+        box-shadow:
+          var(--card-shadow-hover),
+          inset 0 1px 0 rgba(255,255,255,0.06) !important;
+      }
+
+      /* ── Project card hover — neutral glass lift, NO color change ── */
+      .project-card::before { display: none; }
+      .project-card:hover {
+        transform: translateY(-6px);
+        box-shadow:
+          0 24px 60px rgba(0,0,0,0.10),
+          0 8px 24px rgba(0,0,0,0.07),
+          inset 0 1px 0 rgba(255,255,255,0.3);
+        border-color: var(--card-border) !important;
+      }
+      [data-theme="dark"] .project-card:hover {
+        box-shadow:
+          0 24px 60px rgba(0,0,0,0.45),
+          0 8px 24px rgba(0,0,0,0.3),
+          inset 0 1px 0 rgba(255,255,255,0.07);
+        border-color: var(--card-border) !important;
+      }
+
+      /* ══════════════════════════════════════════════════
+         SPRING ANIMATIONS — natural overshoot feel
+      ══════════════════════════════════════════════════ */
+      :root {
+        --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --spring-soft: cubic-bezier(0.22, 1.4, 0.36, 1);
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      /* Buttons spring on hover */
+      .btn, .nav-cta, .social-btn, .gh-link-btn {
+        transition: transform 0.45s var(--spring), box-shadow 0.3s ease, background 0.22s ease, color 0.22s ease, border-color 0.22s ease !important;
+      }
+      .btn:hover, .nav-cta:hover, .social-btn:hover {
+        transform: translateY(-3px) scale(1.03) !important;
+      }
+      .gh-link-btn:hover {
+        transform: translateY(-2px) scale(1.02) !important;
+      }
+      /* Spring on icon rotate */
+      .skill-card:hover .sk-icon {
+        transition: transform 0.5s var(--spring);
+      }
+      /* Tech chip spring lift */
+      .tech-chip {
+        transition: transform 0.45s var(--spring), box-shadow 0.3s ease, border-color 0.28s ease !important;
+      }
+      .tech-chip:hover {
+        transform: translateY(-8px) scale(1.06) !important;
+      }
+      /* Card spring lift */
+      .glass {
+        transition: transform 0.45s var(--spring), box-shadow 0.35s ease, border-color 0.35s ease, background 0.4s ease !important;
+      }
+      /* Contact item spring */
+      .contact-item {
+        transition: transform 0.45s var(--spring), box-shadow 0.3s ease !important;
+      }
+      .contact-item:hover {
+        transform: translateY(-5px) !important;
+      }
+      /* Nav link spring underline */
+      .nav-links a::after {
+        transition: right 0.4s var(--spring-soft);
+      }
+      /* Badge dot spring pulse */
+      .badge-dot {
+        animation: springPulse 2.5s var(--spring) infinite;
+      }
+      @keyframes springPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+        50%       { transform: scale(1.15); box-shadow: 0 0 0 7px rgba(16,185,129,0); }
+      }
+
+      /* ══════════════════════════════════════════════════
+         POPOVER TOOLTIPS — project tech stack tags
+      ══════════════════════════════════════════════════ */
+      [data-tip] {
+        position: relative;
+      }
+      [data-tip]::before,
+      [data-tip]::after {
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%) translateY(6px);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.22s ease, transform 0.3s var(--spring-soft);
+        z-index: 999;
+      }
+      [data-tip]::before {
+        content: attr(data-tip);
+        background: rgba(15, 23, 42, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        color: #e8f0fe;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+      [data-tip]::after {
+        content: "";
+        bottom: calc(100% + 4px);
+        border: 5px solid transparent;
+        border-top-color: rgba(15, 23, 42, 0.92);
+        background: none;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      [data-tip]:hover::before,
+      [data-tip]:hover::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      /* Keep tooltips inside viewport on edge tags */
+      [data-tip]:first-child::before { left: 0; transform: translateY(6px); }
+      [data-tip]:first-child:hover::before { transform: translateY(0); }
+      [data-tip]:first-child::after  { left: 16px; }
+
+      /* ══════════════════════════════════════════════════
+         PREMIUM GLASS HEADERS — section heading strip
+      ══════════════════════════════════════════════════ */
+      .section-glass-header {
+        display: inline-block;
+        padding: 6px 18px 6px 14px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.55);
+        border: 1px solid rgba(255,255,255,0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.8),
+          0 2px 12px rgba(0,0,0,0.06);
+        margin-bottom: 16px;
+      }
+      [data-theme="dark"] .section-glass-header {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.1);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.1),
+          0 2px 12px rgba(0,0,0,0.25);
+      }
+
+      /* Project card — premium frosted glass, no color change on hover */
+      .project-card {
+        background: rgba(255,255,255,0.62) !important;
+        border: 1px solid rgba(255,255,255,0.8) !important;
+        box-shadow:
+          0 4px 24px rgba(0,0,0,0.05),
+          inset 0 1px 0 rgba(255,255,255,0.9) !important;
+      }
+      [data-theme="dark"] .project-card {
+        background: rgba(14,22,45,0.7) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        box-shadow:
+          0 4px 24px rgba(0,0,0,0.35),
+          inset 0 1px 0 rgba(255,255,255,0.06) !important;
+      }
+
+      /* Proj num — glass pill */
+      .proj-num {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.6);
+        border: 1px solid rgba(255,255,255,0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        margin-bottom: 6px;
+      }
+      [data-theme="dark"] .proj-num {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.1);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+      }
+
+      /* Scroll hint — spring entrance */
+      .hero-scroll-hint {
+        animation: fadeUp 0.7s 0.7s var(--ease-out-expo) both;
+      }
+
+      /* Reveal animations use spring */
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        transition-timing-function: var(--ease-out-expo) !important;
+        transition-duration: 0.7s !important;
+      }
+
+      /* ── Remove leftover gradBorder keyframe (no longer used) ── */
+      .scroll-progress {
+        box-shadow: 0 0 10px rgba(16,185,129,0.5), 0 0 20px rgba(14,165,233,0.3);
+      }
+
+      /* ── Hero badge glass glow ── */
+      .hero-badge {
+        box-shadow: 0 4px 24px rgba(5,150,105,0.12), inset 0 1px 0 rgba(255,255,255,0.3);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      /* ── Hero shape glass orbs ── */
+      .hs1 {
+        backdrop-filter: blur(0px);
+        border: 1px solid rgba(16,185,129,0.08);
+        background: radial-gradient(
+          circle,
+          rgba(5, 150, 105, 0.1) 0%,
+          rgba(14,165,233,0.04) 50%,
+          transparent 70%
+        ) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 0 60px rgba(5,150,105,0.08);
+      }
+      .hs2 {
+        border: 1px solid rgba(14,165,233,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 0 40px rgba(14,165,233,0.07);
+      }
+
+      /* ── Stat card glass highlight ── */
+      .stat-card {
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 50%;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent);
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      /* ── Tag hover glow ── */
+      .tag:hover {
+        box-shadow: 0 0 12px rgba(5,150,105,0.2);
+      }
+
+      /* ── Button shimmer effect ── */
+      .btn-primary::after,
+      .nav-cta::after {
+        content: "";
+        position: absolute;
+        top: -50%; left: -60%;
+        width: 40%; height: 200%;
+        background: rgba(255,255,255,0.25);
+        transform: skewX(-20deg) translateX(-100%);
+        transition: transform 0.6s ease;
+      }
+      .btn-primary:hover::after,
+      .nav-cta:hover::after {
+        transform: skewX(-20deg) translateX(500%);
+      }
+
+      /* ── Section heading gradient underline ── */
+      .section-heading em {
+        background: linear-gradient(135deg, var(--emerald) 0%, var(--sky) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       /* ── Scroll Progress ── */
@@ -512,13 +835,9 @@
           border-color 0.35s,
           background 0.4s;
         will-change: transform;
+        position: relative;
+        overflow: hidden;
       }
-      .glass:hover {
-        box-shadow: var(--card-shadow-hover);
-        transform: translateY(-4px);
-        border-color: rgba(5, 150, 105, 0.22);
-      }
-
       /* ════════════════════════ HERO ════════════════════════ */
       #hero {
         min-height: 100vh;
@@ -852,7 +1171,7 @@
       }
       .tech-chip:hover {
         transform: translateY(-6px) scale(1.04);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.14);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.14), 0 0 20px rgba(16,185,129,0.12);
       }
       .tech-icon {
         font-size: 2.4rem;
@@ -999,62 +1318,20 @@
       .skill-card:hover .sk-icon {
         transform: scale(1.12) rotate(-6deg);
       }
-      .sk-icon-green {
-        background: #d1fae5;
-        color: #059669;
-      }
-      .sk-icon-blue {
-        background: #e0f2fe;
-        color: #0284c7;
-      }
-      .sk-icon-amber {
-        background: #fef3c7;
-        color: #d97706;
-      }
-      .sk-icon-violet {
-        background: #ede9fe;
-        color: #7c3aed;
-      }
-      .sk-icon-rose {
-        background: #ffe4e6;
-        color: #e11d48;
-      }
-      .sk-icon-slate {
-        background: #f1f5f9;
-        color: #475569;
-      }
-      .sk-icon-cyan {
-        background: #cffafe;
-        color: #0891b2;
-      }
-      [data-theme="dark"] .sk-icon-green {
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-      }
-      [data-theme="dark"] .sk-icon-blue {
-        background: rgba(14, 165, 233, 0.15);
-        color: #38bdf8;
-      }
-      [data-theme="dark"] .sk-icon-amber {
-        background: rgba(245, 158, 11, 0.15);
-        color: #fbbf24;
-      }
-      [data-theme="dark"] .sk-icon-violet {
-        background: rgba(124, 58, 237, 0.15);
-        color: #a78bfa;
-      }
-      [data-theme="dark"] .sk-icon-rose {
-        background: rgba(244, 63, 94, 0.15);
-        color: #fb7185;
-      }
-      [data-theme="dark"] .sk-icon-slate {
-        background: rgba(100, 116, 139, 0.15);
-        color: #94a3b8;
-      }
-      [data-theme="dark"] .sk-icon-cyan {
-        background: rgba(8, 145, 178, 0.15);
-        color: #22d3ee;
-      }
+      .sk-icon-green  { }
+      .sk-icon-blue   { }
+      .sk-icon-amber  { }
+      .sk-icon-violet { }
+      .sk-icon-rose   { }
+      .sk-icon-slate  { }
+      .sk-icon-cyan   { }
+      [data-theme="dark"] .sk-icon-green  { color: #34d399; }
+      [data-theme="dark"] .sk-icon-blue   { color: #38bdf8; }
+      [data-theme="dark"] .sk-icon-amber  { color: #fbbf24; }
+      [data-theme="dark"] .sk-icon-violet { color: #a78bfa; }
+      [data-theme="dark"] .sk-icon-rose   { color: #fb7185; }
+      [data-theme="dark"] .sk-icon-slate  { color: #94a3b8; }
+      [data-theme="dark"] .sk-icon-cyan   { color: #22d3ee; }
 
       .sk-title {
         font-family: "Poppins", sans-serif;
@@ -1090,48 +1367,228 @@
         color: var(--emerald);
         background: rgba(5, 150, 105, 0.06);
       }
-      .tag-green {
-        background: #d1fae5;
-        border-color: #a7f3d0;
-        color: #065f46;
+      /* tag colors handled by glass block below */
+
+      /* ══════════ ADVANCED GLASSMORPHISM — ICONS & ELEMENTS ══════════ */
+
+      /* ── Skill card icons ── */
+      .sk-icon {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.45);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.6),
+          inset 0 -1px 0 rgba(0,0,0,0.04),
+          0 4px 12px rgba(0,0,0,0.08);
       }
-      .tag-blue {
-        background: #e0f2fe;
-        border-color: #bae6fd;
-        color: #075985;
+      [data-theme="dark"] .sk-icon {
+        border-color: rgba(255,255,255,0.12);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.14),
+          0 4px 14px rgba(0,0,0,0.3);
       }
-      .tag-amber {
-        background: #fef3c7;
-        border-color: #fde68a;
-        color: #92400e;
+      .sk-icon-green  { background: rgba(209,250,229,0.7); }
+      .sk-icon-blue   { background: rgba(224,242,254,0.7); }
+      .sk-icon-amber  { background: rgba(254,243,199,0.7); }
+      .sk-icon-violet { background: rgba(237,233,254,0.7); }
+      .sk-icon-rose   { background: rgba(255,228,230,0.7); }
+      .sk-icon-slate  { background: rgba(241,245,249,0.7); }
+      .sk-icon-cyan   { background: rgba(207,250,254,0.7); }
+      [data-theme="dark"] .sk-icon-green  { background: rgba(16,185,129,0.18); }
+      [data-theme="dark"] .sk-icon-blue   { background: rgba(14,165,233,0.18); }
+      [data-theme="dark"] .sk-icon-amber  { background: rgba(245,158,11,0.18); }
+      [data-theme="dark"] .sk-icon-violet { background: rgba(124,58,237,0.18); }
+      [data-theme="dark"] .sk-icon-rose   { background: rgba(244,63,94,0.18); }
+      [data-theme="dark"] .sk-icon-slate  { background: rgba(100,116,139,0.18); }
+      [data-theme="dark"] .sk-icon-cyan   { background: rgba(8,145,178,0.18); }
+
+      /* ── Contact item icons ── */
+      .ci-icon {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.45);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.6),
+          0 4px 12px rgba(0,0,0,0.07);
       }
-      .tag-violet {
-        background: #ede9fe;
-        border-color: #ddd6fe;
-        color: #5b21b6;
+      [data-theme="dark"] .ci-icon {
+        border-color: rgba(255,255,255,0.12);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.14),
+          0 4px 14px rgba(0,0,0,0.28);
       }
-      [data-theme="dark"] .tag-green {
-        background: rgba(16, 185, 129, 0.15);
-        border-color: rgba(16, 185, 129, 0.3);
-        color: #6ee7b7;
+      .ci-green { background: rgba(209,250,229,0.7); }
+      .ci-slate { background: rgba(241,245,249,0.7); }
+      .ci-sky   { background: rgba(224,242,254,0.7); }
+      [data-theme="dark"] .ci-green { background: rgba(16,185,129,0.18); }
+      [data-theme="dark"] .ci-slate { background: rgba(100,116,139,0.18); }
+      [data-theme="dark"] .ci-sky   { background: rgba(14,165,233,0.18); }
+
+      /* ── Tech chips — frosted inner layer ── */
+      .tech-chip {
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.55),
+          inset 0 -1px 0 rgba(0,0,0,0.03),
+          0 2px 12px rgba(0,0,0,0.06);
       }
-      [data-theme="dark"] .tag-blue {
-        background: rgba(14, 165, 233, 0.15);
-        border-color: rgba(14, 165, 233, 0.3);
-        color: #7dd3fc;
+      [data-theme="dark"] .tech-chip {
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.1),
+          0 2px 12px rgba(0,0,0,0.25);
       }
-      [data-theme="dark"] .tag-amber {
-        background: rgba(245, 158, 11, 0.15);
-        border-color: rgba(245, 158, 11, 0.3);
-        color: #fde68a;
-      }
-      [data-theme="dark"] .tag-violet {
-        background: rgba(124, 58, 237, 0.15);
-        border-color: rgba(124, 58, 237, 0.3);
-        color: #c4b5fd;
+      .tech-chip:hover {
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.7),
+          0 20px 40px rgba(0,0,0,0.13),
+          0 0 20px rgba(16,185,129,0.12) !important;
       }
 
-      /* ════════════════════════ PROJECTS ════════════════════════ */
+      /* ── Tech icon container — glass bubble ── */
+      .tech-icon {
+        background: rgba(255,255,255,0.55);
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.7);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.9),
+          0 2px 8px rgba(0,0,0,0.06);
+        transition: box-shadow 0.25s, background 0.25s;
+      }
+      [data-theme="dark"] .tech-icon {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.12);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.12),
+          0 2px 8px rgba(0,0,0,0.25);
+      }
+      .tech-chip:hover .tech-icon {
+        background: rgba(255,255,255,0.75);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,1),
+          0 4px 16px rgba(0,0,0,0.08);
+      }
+      [data-theme="dark"] .tech-chip:hover .tech-icon {
+        background: rgba(255,255,255,0.12);
+      }
+
+      /* ── Tags — frosted pill ── */
+      .tag {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.55),
+          0 1px 4px rgba(0,0,0,0.05);
+      }
+      [data-theme="dark"] .tag {
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.08),
+          0 1px 4px rgba(0,0,0,0.2);
+      }
+      .tag-green  { background: rgba(209,250,229,0.65) !important; border-color: #a7f3d0 !important; color: #065f46 !important; }
+      .tag-blue   { background: rgba(224,242,254,0.65) !important; border-color: #bae6fd !important; color: #075985 !important; }
+      .tag-amber  { background: rgba(254,243,199,0.65) !important; border-color: #fde68a !important; color: #92400e !important; }
+      .tag-violet { background: rgba(237,233,254,0.65) !important; border-color: #ddd6fe !important; color: #5b21b6 !important; }
+      [data-theme="dark"] .tag-green  { background: rgba(16,185,129,0.18) !important;  border-color: rgba(16,185,129,0.3)  !important; color: #6ee7b7 !important; }
+      [data-theme="dark"] .tag-blue   { background: rgba(14,165,233,0.18) !important;  border-color: rgba(14,165,233,0.3)  !important; color: #7dd3fc !important; }
+      [data-theme="dark"] .tag-amber  { background: rgba(245,158,11,0.18) !important;  border-color: rgba(245,158,11,0.3)  !important; color: #fde68a !important; }
+      [data-theme="dark"] .tag-violet { background: rgba(124,58,237,0.18)  !important; border-color: rgba(124,58,237,0.3)  !important; color: #c4b5fd !important; }
+
+      /* ── Nav CTA & buttons — glass sheen ── */
+      .nav-cta {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow:
+          0 4px 16px rgba(5,150,105,0.3),
+          inset 0 1px 0 rgba(255,255,255,0.3);
+      }
+      .btn-primary {
+        box-shadow:
+          0 6px 24px rgba(5,150,105,0.35),
+          inset 0 1px 0 rgba(255,255,255,0.25);
+      }
+      .btn-ghost {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.6),
+          0 2px 12px rgba(0,0,0,0.06);
+      }
+      [data-theme="dark"] .btn-ghost {
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.1),
+          0 2px 12px rgba(0,0,0,0.2);
+      }
+
+      /* ── Theme toggle — glass circle ── */
+      .theme-toggle {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background: rgba(255,255,255,0.45) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.7),
+          0 2px 8px rgba(0,0,0,0.07);
+        border-color: rgba(255,255,255,0.5) !important;
+      }
+      [data-theme="dark"] .theme-toggle {
+        background: rgba(255,255,255,0.07) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.1),
+          0 2px 8px rgba(0,0,0,0.25);
+        border-color: rgba(255,255,255,0.1) !important;
+      }
+      .theme-toggle:hover {
+        background: rgba(5,150,105,0.1) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.5),
+          0 0 12px rgba(5,150,105,0.15) !important;
+      }
+
+      /* ── GitHub link button ── */
+      .gh-link-btn {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.5),
+          0 2px 8px rgba(0,0,0,0.06);
+      }
+      [data-theme="dark"] .gh-link-btn {
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.08),
+          0 2px 8px rgba(0,0,0,0.2);
+      }
+
+      /* ── Social buttons — glass sheen ── */
+      .btn-github {
+        box-shadow:
+          0 4px 20px rgba(0,0,0,0.15),
+          inset 0 1px 0 rgba(255,255,255,0.15);
+      }
+      .btn-linkedin {
+        box-shadow:
+          0 4px 20px rgba(10,102,194,0.25),
+          inset 0 1px 0 rgba(255,255,255,0.2);
+      }
+
+      /* ── Hero badge — glass pill ── */
+      .hero-badge {
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.5),
+          0 4px 20px rgba(5,150,105,0.1) !important;
+      }
+
+      /* ── Mobile menu links — glass underline ── */
+      .mobile-menu a::after {
+        backdrop-filter: blur(4px);
+      }
+
+      /* ── Scroll hint bar ── */
+      .scroll-bar {
+        backdrop-filter: blur(4px);
+        border-radius: 2px;
+      }
       .projects-list {
         display: flex;
         flex-direction: column;
@@ -1142,13 +1599,17 @@
         border-radius: var(--radius-lg);
         position: relative;
         overflow: hidden;
-        transform-style: preserve-3d;
         transition:
           box-shadow 0.3s,
           border-color 0.3s,
           background 0.4s;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: var(--card-shadow);
       }
-      .project-card::after {
+      .project-card .accent-bar {
         content: "";
         position: absolute;
         top: 0;
@@ -1160,28 +1621,12 @@
         opacity: 0;
         transition: opacity 0.3s;
       }
-      .project-card:hover::after {
+      .project-card:hover .accent-bar {
         opacity: 1;
       }
 
-      /* shine sweep */
-      .project-card .shine {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        background: linear-gradient(
-          105deg,
-          transparent 38%,
-          rgba(255, 255, 255, 0.05) 50%,
-          transparent 62%
-        );
-        transform: translateX(-100%);
-        transition: transform 0.65s ease;
-      }
-      .project-card:hover .shine {
-        transform: translateX(100%);
-      }
+      /* shine now handled by .glass::after */
+      .project-card .shine { display: none; }
 
       .proj-header {
         display: flex;
@@ -1317,30 +1762,12 @@
         flex-shrink: 0;
         transition: transform 0.22s;
       }
-      .ci-green {
-        background: #d1fae5;
-        color: #059669;
-      }
-      .ci-slate {
-        background: #f1f5f9;
-        color: #475569;
-      }
-      .ci-sky {
-        background: #e0f2fe;
-        color: #0284c7;
-      }
-      [data-theme="dark"] .ci-green {
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-      }
-      [data-theme="dark"] .ci-slate {
-        background: rgba(100, 116, 139, 0.15);
-        color: #94a3b8;
-      }
-      [data-theme="dark"] .ci-sky {
-        background: rgba(14, 165, 233, 0.15);
-        color: #38bdf8;
-      }
+      .ci-green { color: #059669; }
+      .ci-slate { color: #475569; }
+      .ci-sky   { color: #0284c7; }
+      [data-theme="dark"] .ci-green { color: #34d399; }
+      [data-theme="dark"] .ci-slate { color: #94a3b8; }
+      [data-theme="dark"] .ci-sky   { color: #38bdf8; }
       .ci-label {
         font-family: "JetBrains Mono", monospace;
         font-size: 0.64rem;
@@ -1706,9 +2133,10 @@
     </style>
   </head>
   <body>
-    <!-- Custom cursor (desktop) -->
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
 
     <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -2034,6 +2462,7 @@
           <div class="projects-list">
             <div class="project-card glass reveal">
               <div class="shine"></div>
+              <div class="accent-bar"></div>
               <div class="proj-header">
                 <div>
                   <div class="proj-num">01 · Project</div>
@@ -2066,19 +2495,20 @@
                 </li>
               </ul>
               <div class="proj-stack">
-                <span class="tag tag-green">Node.js</span
-                ><span class="tag">Express.js</span
-                ><span class="tag tag-green">MongoDB</span
-                ><span class="tag">Redis</span
-                ><span class="tag">WebSockets</span><span class="tag">JWT</span
-                ><span class="tag">Nodemailer</span
-                ><span class="tag">Bcryptjs</span
-                ><span class="tag">Rate Limiting</span>
+                <span class="tag tag-green" data-tip="Runtime environment">Node.js</span
+                ><span class="tag" data-tip="Web framework">Express.js</span
+                ><span class="tag tag-green" data-tip="NoSQL database">MongoDB</span
+                ><span class="tag" data-tip="In-memory cache + OTP">Redis</span
+                ><span class="tag" data-tip="Real-time communication">WebSockets</span><span class="tag" data-tip="Auth tokens">JWT</span
+                ><span class="tag" data-tip="Email delivery">Nodemailer</span
+                ><span class="tag" data-tip="Password hashing">Bcryptjs</span
+                ><span class="tag" data-tip="Traffic limiting">Rate Limiting</span>
               </div>
             </div>
 
             <div class="project-card glass reveal d1">
               <div class="shine"></div>
+              <div class="accent-bar"></div>
               <div class="proj-header">
                 <div>
                   <div class="proj-num">02 · Project</div>
@@ -2106,13 +2536,13 @@
                 </li>
               </ul>
               <div class="proj-stack">
-                <span class="tag tag-green">Node.js</span
-                ><span class="tag">Express.js</span
-                ><span class="tag tag-green">MongoDB</span
-                ><span class="tag">Mongoose</span><span class="tag">JWT</span
-                ><span class="tag">Bcryptjs</span
-                ><span class="tag tag-violet">Stripe</span
-                ><span class="tag">express-validator</span>
+                <span class="tag tag-green" data-tip="Runtime environment">Node.js</span
+                ><span class="tag" data-tip="Web framework">Express.js</span
+                ><span class="tag tag-green" data-tip="NoSQL database">MongoDB</span
+                ><span class="tag" data-tip="ODM for MongoDB">Mongoose</span><span class="tag" data-tip="Auth tokens">JWT</span
+                ><span class="tag" data-tip="Password hashing">Bcryptjs</span
+                ><span class="tag tag-violet" data-tip="Payment gateway">Stripe</span
+                ><span class="tag" data-tip="Input validation">express-validator</span>
               </div>
             </div>
           </div>
@@ -2341,24 +2771,6 @@
           { passive: true },
         );
 
-        /* ── 3D Tilt on Project Cards ── */
-        document.querySelectorAll(".project-card").forEach(function (card) {
-          card.addEventListener("mousemove", function (e) {
-            var r = card.getBoundingClientRect();
-            var dx = (e.clientX - (r.left + r.width / 2)) / r.width;
-            var dy = (e.clientY - (r.top + r.height / 2)) / r.height;
-            card.style.transform =
-              "perspective(900px) rotateX(" +
-              -dy * 4 +
-              "deg) rotateY(" +
-              dx * 4 +
-              "deg) translateY(-4px)";
-          });
-          card.addEventListener("mouseleave", function () {
-            card.style.transform = "";
-          });
-        });
-
         /* ── Ripple on Buttons ── */
         document
           .querySelectorAll(".btn,.social-btn,.gh-link-btn,.nav-cta")
@@ -2394,49 +2806,7 @@
           document.head.appendChild(s);
         }
 
-        /* ── Custom Cursor ── */
-        var dot = document.getElementById("cursor-dot");
-        var ring = document.getElementById("cursor-ring");
-        if (dot && ring && window.matchMedia("(hover:hover)").matches) {
-          var mx = 0,
-            my = 0,
-            rx = 0,
-            ry = 0;
-          document.addEventListener("mousemove", function (e) {
-            mx = e.clientX;
-            my = e.clientY;
-            dot.style.left = mx + "px";
-            dot.style.top = my + "px";
-          });
-          /* Ring follows with slight lag */
-          (function loop() {
-            rx += (mx - rx) * 0.12;
-            ry += (my - ry) * 0.12;
-            ring.style.left = rx + "px";
-            ring.style.top = ry + "px";
-            requestAnimationFrame(loop);
-          })();
-          /* Hover states */
-          var hoverEls = document.querySelectorAll(
-            "a,button,.tech-chip,.contact-item",
-          );
-          hoverEls.forEach(function (el) {
-            el.addEventListener("mouseenter", function () {
-              document.body.classList.add("cursor-hover");
-            });
-            el.addEventListener("mouseleave", function () {
-              document.body.classList.remove("cursor-hover");
-            });
-          });
-          document.addEventListener("mouseleave", function () {
-            dot.style.opacity = "0";
-            ring.style.opacity = "0";
-          });
-          document.addEventListener("mouseenter", function () {
-            dot.style.opacity = "1";
-            ring.style.opacity = "1";
-          });
-        }
+
 
         /* ── Tech chip hover sound-like micro-interaction ── */
         document.querySelectorAll(".tech-chip").forEach(function (chip) {
